@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  main:
+    build:
+      context: .
+      dockerfile: dockerfile
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - firestore
+    env_file:
+     - ./.env
+    command: "yarn dev"
+    environment:
+      - ENV=local
+      - DISCORD_TOKEN=
+      - PROJECT_ID=
+      - FIRESTORE_EMULATOR_HOST=firestore:8099
+  firestore:
+    build:
+      context: .
+      dockerfile: dockerfile.firestore
+    ports:
+      - 4099:4099 # ui
+      - 8099:8099 # firestore
+    volumes:
+      - .:/app/.cache/firebase/emulators/
+    command: firebase --project=discord emulators:start --only firestore
